@@ -1,0 +1,21 @@
+version: 1
+formatters:
+  json:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    datefmt: "%Y-%m-%dT%H:%M:%S%z"
+    class: pythonjsonlogger.jsonlogger.JsonFormatter
+handlers:
+  standard:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: json
+    filename: app.log
+loggers:
+  standard:
+    level: DEBUG
+    handlers: [standard]
+    propagate: no
+root:
+  level: DEBUG
+  handlers: [standard]
+

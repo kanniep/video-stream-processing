@@ -1,0 +1,23 @@
+---
+version: "2.3"
+services:
+  video-producer:
+    image: kannie/video-producer
+    container_name: video-producer
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - $PWD:/usr/src/app
+      - /dev/video0:/dev/video0
+    environment:
+      KAFKA_TOPIC: test
+      KAFKA_BOOTSTRAP_SERVERS: $DOCKER_HOST_IP:9092
+      KAFKA_CLIENT_ID: "producer1"
+      CAMERA_ID: http://pi.local:8081/
+      FRAME_WIDTH: 1920
+      FRAME_HEIGHT: 1080
+      FRAME_RATE: 30
+      FRAME_BUFFER_SIZE: 3
+    privileged: true
+    command: bash -c "python -u app.py"

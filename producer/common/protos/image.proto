@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "common.protos.image";
+option java_outer_classname = "Image";
+option objc_class_prefix = "vsp";
+
+
+service Detector {
+    rpc Detect (ImageInfo) returns (ImageInfoWithMeta) {}
+}
+
+message ImageInfo {
+    uint32 width = 1;
+    uint32 height = 2;
+    bytes image = 3;
+}
+
+message Detection {
+    string category = 1;
+    double confidence = 2;
+    float x1 = 3;
+    float y1 = 4;
+    float x2 = 5;
+    float y2 = 6;
+}
+
+message ImageInfoWithMeta {
+    ImageInfo image_info = 1;
+    repeated Detection detections = 2;
+}

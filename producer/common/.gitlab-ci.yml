@@ -1,0 +1,58 @@
+# Official language image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/python/tags/
+image: docker:latest
+
+# Change pip's cache directory to be inside the project directory since we can
+# only cache local items.
+variables:
+  DOCKER_HOST_IP: 172.17.0.1
+  DOCKER_REGISTRY_PORT: 5000
+
+# Pip's cache doesn't store the python packages
+# https://pip.pypa.io/en/stable/reference/pip_install/#caching
+#
+# If you want to also cache the installed packages, you have to install
+# them in a virtualenv and cache it as well.
+# cache:
+#   paths:
+#     - .cache/pip
+#     - venv/
+
+before_script:
+  # - python -V  # Print out python version for debugging
+  - apk --no-cache add findutils
+  - export REGISTRY_URL=$DOCKER_HOST_IP:5000
+  - export DOCKER_IMAGE=$REGISTRY_URL/kannie/proto-builder:$CI_COMMIT_BRANCH
+  - echo $CI_COMMIT_BRANCH
+
+test:
+  script:
+    - docker build -t $DOCKER_IMAGE . && docker push $DOCKER_IMAGE
+    - docker run --name common_master $DOCKER_IMAGE protoc --proto_path=. --python_out=. $(find protos/*.proto -type f -printf "%f ")
+    - docker cp common_master:/protos .
+    - docker rm -f common_master
+  artifacts:
+    paths:
+      - protos/*.py
+  except:
+    - master
+# run:
+#   script:
+#     - python setup.py bdist_wheel
+#     # an alternative approach is to install and run:
+#     - pip install dist/*
+#     # run the command here
+#   artifacts:
+#     paths:
+#       - dist/*.whl
+
+# pages:
+#   script:
+#     - pip install sphinx sphinx-rtd-theme
+#     - cd doc ; make html
+#     - mv build/html/ ../public/
+#   artifacts:
+#     paths:
+#       - public
+#   only:
+#     - master

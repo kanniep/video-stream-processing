@@ -1,0 +1,16 @@
+---
+version: "2.3"
+services:
+  video-processor-editor:
+    image: kannie/video-processor
+    container_name: video-processor-editor
+    volumes:
+      - $PWD:/usr/src/app
+    environment:
+      - KAFKA_CONSUMER_TOPIC=test
+      - KAFKA_PRODUCER_TOPIC=meta_test
+      - KAFKA_BOOTSTRAP_SERVERS=$DOCKER_HOST_IP:9092
+      - KAFKA_CLIENT_ID="processor1"
+      - PROCESSOR_URL=0.0.0.0:5000
+      - MAX_ASYNC_CALLS=8
+    command: bash -c "tail -f /dev/null"
