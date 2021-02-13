@@ -4,6 +4,8 @@ a straightforward and real-time video processing framework for computer vision t
 The framework components are written in python and using Apache Kafka in between to ensure fault tolerance.
 This version guarantee images order which required in some application like object tracking
 
+![Image of Yaktocat](./images/video-stream-processing.png)
+
 the framework consists of three main components that can be easily modified to fit your requirements.
 - **Producer** produces video feed into the framework. The Producer read images from a remote camera (tested with a local camera attached with Raspberry-pi) to a Kafka topic. These images have to be cast to Protobuff object in bytes form.
 - **Processing Broker** routes images produced by the Producer from a Kafka topic to a plug and play processing GRPC server. The broker makes async calls to the external processor service, to prevent the external processor processing time to affect the framework throughput The processor can be any image processing algorithm that inputs an image and returns a result for that image. Then the broker puts an image with the result to another Kafka topic.
